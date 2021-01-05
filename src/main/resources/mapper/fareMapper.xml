@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jk.dao.FareDao">
+    <insert id="saveFare" useGeneratedKeys="true" keyProperty="fareId">
+        insert into t_fare(fareName,typeId,start,`end`,farePrice,fareInfo,fareDate)
+        values (#{fareName},#{typeId},#{start},#{end},#{farePrice},#{fareInfo},#{fareDate})
+    </insert>
+    <delete id="delFare">
+        delete from t_fare where fareId = #{fareId}
+    </delete>
+    <update id="upFare">
+        update t_fare set
+        fareName = #{fareName},
+        typeId = #{typeId},
+        start = #{start},
+        `end` = #{end},
+        farePrice = #{farePrice},
+        fareInfo = #{fareInfo},
+        fareDate = #{fareDate}
+        where fareId = #{fareId}
+    </update>
+</mapper>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入jquery.js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/jquery.min.js"></script>
+    <!-- 引入easyui的js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/jquery.easyui.min.js"></script>
+    <!-- 引入easyui的中文js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/locale/easyui-lang-zh_CN.js"></script>
+
+    <!-- 引入easyui的css文件 -->
+    <link rel="stylesheet" href="../js/jquery-easyui-1.5/themes/default/easyui.css">
+    <!-- 引入easyui图标的css文件 -->
+    <link rel="stylesheet" href="../js/jquery-easyui-1.5/themes/icon.css">
+</head>
+<body>
+
+    <div id="myDialog" class="easyui-dialog" style="width:600px;height:300px" data-options="title:'My Dialog',modal:true,closed:true">
+        <form id="fareForm">
+            <input  name="fareId">
+            <table>
+                <tr>
+                    <td>车次名称</td>
+                    <td>
+                        <input class="easyui-textbox" name="fareName">
+                    </td>
+                </tr>
+                <tr>
+                    <td>类型</td>
+                    <td>
+                        <input class="easyui-textbox" name="typeId">
+                    </td>
+                </tr>
+                <tr>
+                    <td>出发站</td>
+                    <td>
+                        <input class="easyui-textbox" name="start">
+                    </td>
+                </tr>
+                <tr>
+                    <td>到达站</td>
+                    <td>
+                        <input class="easyui-textbox" name="end">
+                    </td>
+                </tr>
+                <tr>
+                    <td>票价</td>
+                    <td>
+                        <input class="easyui-textbox" name="farePrice">
+                    </td>
+                </tr>
+                <tr>
+                    <td>描述</td>
+                    <td>
+                        <input class="easyui-textbox" name="fareInfo">
+                    </td>
+                </tr>
+                <tr>
+                    <td>发出时间</td>
+                    <td>
+                        <input class="easyui-datebox" name="fareDate">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div id="mydiv">
+        站点：
+        <input class="easyui-textbox" id="zhan">
+        价格区间：
+        <input class="easyui-textbox" id="startPrice">--
+        <input class="easyui-textbox" id="endPrice">
+        <a class="easyui-linkbutton" onclick="searchBook()">搜索</a>
+        <a class="easyui-linkbutton" onclick="saveFare()">新增</a>
+    </div>
+    <table id="fareTable"></table>
+</body>
+<script>
+    $(function(){
+        initTable();//初始化表格
+    })
+
+    //条查
+    function searchBook(){
+        $("#fareTable").datagrid("load",{
+            "zhan":$("#zhan").textbox("getValue"),
+            "startPrice":$("#startPrice").textbox("getValue"),
+            "endPrice":$("#endPrice").textbox("getValue")
+        });
+    }
+
+    //初始化表格
+    function initTable() {
+        $("#fareTable").datagrid({
+            url:"../fare/findAll1",
+            toolbar:"#mydiv",
+            columns:[
+                [
+                    {field:"fareName",title:"fareName"},
+                    {field:"typeId",title:"typeId",},
+                    {field:"start",title:"start"},
+                    {field:"end",title:"end"},
+                    {field:"farePrice",title:"farePrice"},
+                    {field:"fareInfo",title:"fareInfo"},
+                    {field:"fareDate",title:"fareDate"},
+                    {field:"tools",title:"tools",formatter:function(value,row,index){
+                        var str = "";
+
+                        str+='<button onclick="delFare('+row.fareId+')">删除</button>';
+                        str+='<button onclick="updFare('+row.fareId+')">修改</button>';
+
+                        return str;
+                        }}
+                ]
+            ],
+            pagination:true,
+            pageSize:2,
+            pageList:[1,2,3,4,5]
+        });
+    }
+
+    //打开修改弹窗
+    function updFare(fareId){
+        $("#myDialog").dialog({
+            title:"修改窗口",
+            closed: false,
+            buttons:[{
+                text:'保存',
+                handler:function(){
+                    save();
+                }
+            },{
+                text:'取消',
+                handler:function(){
+                    $("#fareForm").form("reset");
+                    $("#myDialog").dialog({
+                        closed: true
+                    });
+                }
+            }]
+        });
+        $.ajax({
+            url:"../fare/findFareById",
+            data:{fareId:fareId},
+            success:function(data){
+                $("#fareForm").form("load",data);
+            }
+        })
+    }
+
+    //打开新增弹窗
+    function saveFare(){
+        $("#myDialog").dialog({
+            title:"新增窗口",
+            closed: false,
+            buttons:[{
+                text:'保存',
+                handler:function(){
+                    save();
+                }
+            },{
+                text:'取消',
+                handler:function(){
+                    $("#fareForm").form("reset");
+                    $("#myDialog").dialog({
+                        closed: true
+                    });
+                }
+            }]
+        })
+    }
+
+    function delFare(fareId){
+        $.ajax({
+            url:"../fare/delFare",
+            data:{fareId:fareId},
+            success:function(){
+                $("#fareTable").datagrid("load");
+                $.messager.alert('提示消息','删除成功！','info');
+            }
+        })
+    }
+
+    function save(){
+        $.ajax({
+            url:"../fare/saveFare",
+            data:$("#fareForm").serialize(),
+            success:function () {
+                $.messager.alert('提示消息','新增成功！','info');
+                $("#fareForm").form("reset");
+                $("#myDialog").dialog({
+                    closed: true
+                });
+                $("#fareTable").datagrid("load");
+            }
+        })
+    }
+</script>
+</html>

@@ -1,0 +1,24 @@
+server:
+  port: 8081
+#配置数据库连接信息
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/tom?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    username: root
+    password:
+  data:
+    #配置elasticSearch信息
+    elasticsearch:
+      #连接的集群名称
+      cluster-name: elasticsearch
+      #连接的集群节点
+      cluster-nodes: 127.0.0.1:9300
+      #是否开启本地储存
+      repositories:
+        enabled: true
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+

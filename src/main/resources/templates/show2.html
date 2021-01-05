@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入jquery.js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/jquery.min.js"></script>
+    <!-- 引入easyui的js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/jquery.easyui.min.js"></script>
+    <!-- 引入easyui的中文js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/locale/easyui-lang-zh_CN.js"></script>
+
+    <!-- 引入easyui的css文件 -->
+    <link rel="stylesheet" href="../js/jquery-easyui-1.5/themes/default/easyui.css">
+    <!-- 引入easyui图标的css文件 -->
+    <link rel="stylesheet" href="../js/jquery-easyui-1.5/themes/icon.css">
+</head>
+<body>
+    <div id="mydiv">
+        音乐名称/作者：
+        <input class="easyui-textbox" id="name">
+        时间区间：
+        <input class="easyui-datebox" id="start">--
+        <input class="easyui-datebox" id="end">
+        <a class="easyui-linkbutton" onclick="searchBook()">搜索</a>
+    </div>
+    <table id="musicTable"></table>
+</body>
+<script>
+    $(function(){
+        initTable();//初始化表格
+    })
+
+    //条查
+    function searchBook(){
+        $("#musicTable").datagrid("load",{
+            "name":$("#name").textbox("getValue"),
+            "start":$("#start").datebox("getValue"),
+            "end":$("#end").datebox("getValue")
+        });
+    }
+
+    //初始化表格
+    function initTable() {
+        $("#musicTable").datagrid({
+            url:"../music/findAll",
+            toolbar:"#mydiv",
+            columns:[
+                [
+                    {field:"id",title:"id"},
+                    {field:"name",title:"name",},
+                    {field:"author",title:"author"},
+                    {field:"createdate",title:"createdate"},
+                    {field:"price",title:"price"},
+                    {field:"info",title:"info"}
+                ]
+            ],
+            pagination:true,
+            pageSize:2,
+            pageList:[1,2,3,4,5]
+        });
+    }
+</script>
+</html>
